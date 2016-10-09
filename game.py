@@ -12,17 +12,12 @@ def heuristicY():
 def updateBoard(board,move):
 # generate list of possible moves by opponent
 # finds correct move and updates board 
-    l = [] 
-    for i in board.legal_moves:     # generate moves
-        if str(i)[-2:] == str(move)[-2:]:
-            l.append(str(i))
-
-    for i in l:
-        index = getIndex(i[:2])
-        if board.piece_at(index) == str(move)[4]:
-            board.push(i)
-            return
-
+    for i in list(board.legal_moves):     # generate moves
+        if str(i)[2:] == str(move)[-3:-1]: # look for matches to move made by opponent
+            index = getIndex(str(i)[:2])
+            if str(board.piece_at(0)) == str(move)[4]:
+                board.push(i)
+                break
 
 def getIndex(move):
 # Returns an index given a square on the board
@@ -35,7 +30,7 @@ def showMove(turn, move, board):
 # Writes move to appropriate log file
     print(str(board)) # print the board in ascii
     board.pop()       
-    index = getIndex(str(move)[:2])
+    index = getIndex(str(move)[:2]) 
     piece = board.piece_at(index)
     board.push(move)
     if board.turn == False: 
@@ -55,9 +50,9 @@ def move(board):
 
 def lastMoveMade(fn):
 # Returns the last entry in log file 
-    with open(fn) as fh:
-        moveList = fh.readlines()
-    fh.close()
+    with open(fn) as log:
+        moveList = log.readlines()
+    log.close()
     if moveList == []:
         return ''
     else:
@@ -72,49 +67,62 @@ def setupBoard():
 def play(n):
 # Driver function which initiates play
 # input: number of moves n
-    player = input("Pick your player (X or Y):")
+    player = str(input("Pick your player (X or Y): "))
+
+    #setup and display initial board
     board = setupBoard()
-    log_x = open('log_x.txt','w+')
-    log_y = open('log_y.txt','w+')
-    log_x.close()
-    log_y.close()
-    xMove = ''  
-    yMove = ''
+
+    # Player X checks if log files exist, otherwise creates them
+    if player.upper() == "X":
+        log_x = open('log_x.txt','w+')
+        log_y = open('log_y.txt','w+')
+        log_x.close()
+        log_y.close()
+
     turnCount = 1
 
-    if player.upper() == 'X': # PlayerX (white) was chosen
-        while turnCount != n or board.is_game_over() != True:
+    if player.upper() == "X":
+        yMove = ''
+        while turnCount <= n:
+            print("Turn ", turnCount)
+            if board.is_game_over() == True:
+                break
+            elif board.is_stalemate() == True:
+                break
+
             if turnCount is 1:
-                print("First move of the game")
                 nextMove = move(board)
-                showMove(turnCount, nextMove, board)
-                turnCount +=1
+                showMove(turnCount, nextMove,board)
             else:
                 while yMove == lastMoveMade('log_y.txt'): # Wait for PlayerY to make a move
                     pass
-                print("current turn is ", board.turn)
-                yMove = lastMoveMade('log_y.txt') # Change last move made by PlayerY
+                yMove = lastMoveMade('log_y.txt') # Change last move made by PlayerY)
                 updateBoard(board,yMove)     # Update board with most recent move
-                nextMove = move(board)
+                nextMove = move(board)           
                 showMove(turnCount, nextMove, board)
-                turnCount += 1
+            turnCount += 1
 
-    elif player.upper() == 'Y': # PlayerY (black) was chosen
-        while turnCount != n or board.is_game_over() != True:
-            while xMove == lastMoveMade('log_x.txt'): # Wait for PlayerX to make a move
+    elif player.upper() =="Y":
+        xMove = ''
+        while turnCount <= n:
+            print("Turn ", turnCount)
+            if board.is_game_over() == True:
+                break
+            elif board.is_stalemate() == True:
+                break    
+            while xMove == lastMoveMade('log_x.txt'):  # Wait for PlayerX to make a move
                 pass
-            xMove = lastMoveMade('log_x.txt') # Change last move made by PlayerX
+            xMove = lastMoveMade('log_x.txt')   # Change last move made by PlayerY
             updateBoard(board,xMove)     # Update board with most recent move
-            nextMove = move(board)      
+            nextMove = move(board)     
             showMove(turnCount,nextMove,board)
-            turnCount+=1
+            turnCount += 1
     else:
-        print("That player does not exist")
-
+        print("That Player does not exist")
 
 def main():
-    maxMoves = input("Input the max number of turns: ")
-    print("Turn limit set to: ", maxMoves)
+    maxMoves = int(input("Input the max number turns:"))
+    print('Turn limit set to:', maxMoves)
     play(maxMoves)
 
 if __name__ == "__main__":
