@@ -13,7 +13,7 @@ def updateBoard(board,move):
 # generate list of possible moves by opponent
 # finds correct move and updates board 
     for i in list(board.legal_moves):     # generate moves
-        if str(i)[2:] == str(move)[-3:-1]: # look for matches to move made by opponent
+        if str(i)[2:] == str(move)[-3:-1]: # look for match of opponent's move
             index = getIndex(str(i)[:2])
             if str(board.piece_at(0)) == str(move)[4]:
                 board.push(i)
@@ -94,10 +94,12 @@ def play(n):
                 nextMove = move(board)
                 showMove(turnCount, nextMove,board)
             else:
+                board.turn = False
                 while yMove == lastMoveMade('log_y.txt'): # Wait for PlayerY to make a move
                     pass
                 yMove = lastMoveMade('log_y.txt') # Change last move made by PlayerY)
                 updateBoard(board,yMove)     # Update board with most recent move
+                board.turn = True
                 nextMove = move(board)           
                 showMove(turnCount, nextMove, board)
             turnCount += 1
@@ -110,10 +112,12 @@ def play(n):
                 break
             elif board.is_stalemate() == True:
                 break    
+            board.turn = True
             while xMove == lastMoveMade('log_x.txt'):  # Wait for PlayerX to make a move
                 pass
             xMove = lastMoveMade('log_x.txt')   # Change last move made by PlayerY
             updateBoard(board,xMove)     # Update board with most recent move
+            board.turn = False
             nextMove = move(board)     
             showMove(turnCount,nextMove,board)
             turnCount += 1
