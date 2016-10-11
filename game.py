@@ -17,29 +17,31 @@ def updateBoard(board,move):
             index = getIndex(str(i)[:2])
             if str(board.piece_at(0)) == str(move)[4]:
                 board.push(i)
+                print("matched the move, " , str(i))
                 break
 
 def getIndex(move):
 # Returns an index given a square on the board
     d = {'a':0,'b':1,'c':2,'d':3,'e':4,'f':5,'g':6,'h':7}
-    index = d[move[0]] + 7 * (int(move[1]) -1)
+    index = d[move[0]] + 8 * (int(move[1])-1)
     return index
 
 def showMove(turn, move, board):
 # Displays the board 
 # Writes move to appropriate log file
     print(str(board)) # print the board in ascii
-    board.pop()       
-    index = getIndex(str(move)[:2]) 
+    board.pop()       # go back one move
+    mv = str(move)[:2] 
+    index = getIndex(mv) # find the character of the piece moved
     piece = board.piece_at(index)
-    board.push(move)
+    board.push(move)    # return to current board
     if board.turn == False: 
         log_x = open('log_x.txt','a')
-        log_x.write(str(turn) +':X' +':' + str(piece) +':'+ str(move)[-2:]+ '\n')
+        log_x.write(str(turn) +':X:' + str(piece) +':'+ str(move)[-2:]+ '\n')
         log_x.close()
     else:                   
         log_y = open('log_y.txt','a')
-        log_y.write(str(turn) +':Y' +':' + str(piece) +':'+ str(move)[-2:]+ '\n')
+        log_y.write(str(turn) +':Y:' + str(piece).lower() +':'+ str(move)[-2:]+ '\n')
         log_y.close()
 
 def move(board):
@@ -118,7 +120,7 @@ def play(n):
             xMove = lastMoveMade('log_x.txt')   # Change last move made by PlayerY
             updateBoard(board,xMove)     # Update board with most recent move
             board.turn = False
-            nextMove = move(board)     
+            nextMove = move(board)   
             showMove(turnCount,nextMove,board)
             turnCount += 1
     else:
@@ -130,4 +132,4 @@ def main():
     play(maxMoves)
 
 if __name__ == "__main__":
-    main()
+	main()
