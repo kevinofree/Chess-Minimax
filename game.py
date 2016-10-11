@@ -87,11 +87,8 @@ def play(n):
         yMove = ''
         while turnCount <= n:
             print("Turn ", turnCount)
-            if board.is_game_over() == True:
+            if board.is_game_over() == True or board.is_stalemate() == True:
                 break
-            elif board.is_stalemate() == True:
-                break
-
             if turnCount is 1:
                 nextMove = move(board)
                 showMove(turnCount, nextMove,board)
@@ -105,15 +102,23 @@ def play(n):
                 nextMove = move(board)           
                 showMove(turnCount, nextMove, board)
             turnCount += 1
+            
+        if board.is_game_over() == True:
+            log_x = open('log_x.txt','a')
+            log_x.write("Checkmate\n")
+        elif board.is_stalemate() == True:
+            log_x = open('log_x.txt','a')
+            log_x.write("Stalemate\n")
+        else:
+            log_x = open('log_x.txt','a')
+            log_x.write("Maximum # of turns reached\n")
 
     elif player.upper() =="Y":
         xMove = ''
         while turnCount <= n:
             print("Turn ", turnCount)
-            if board.is_game_over() == True:
+            if board.is_game_over() == True or board.is_stalemate() == True:
                 break
-            elif board.is_stalemate() == True:
-                break    
             board.turn = True
             while xMove == lastMoveMade('log_x.txt'):  # Wait for PlayerX to make a move
                 pass
@@ -123,6 +128,16 @@ def play(n):
             nextMove = move(board)   
             showMove(turnCount,nextMove,board)
             turnCount += 1
+
+        if board.is_game_over() == True:
+            log_y = open('log_y.txt','a')
+            log_y.write("Checkmate\n")
+        elif board.is_stalemate() == True:
+            log_y = open('log_y.txt','a')
+            log_y.write("Stalemate\n")
+        else:
+            log_y = open('log_y.txt','a')
+            log_y.write("Maximum # of turns reached\n")
     else:
         print("That Player does not exist")
 
