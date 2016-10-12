@@ -1,13 +1,47 @@
 import chess
 from IPython.display import display
+from random import randint
 
-def heuristicX():
+def heuristicX(board):
 #Heuristic function for PlayerX
-    pass
+    return randint(0,9)
+    #pass
 
-def heuristicY():
+def heuristicY(board):
 #Heuristic function for PlayerY
-    pass
+    return randint(0,9)
+    #pass
+
+def minimax(board, depth):
+    if depth == 0:
+        return randint(0,9)
+        #if board.turn == True:
+        #    return heuristicX(board)
+        #else:
+        #    return heuristicY(board)
+    else:
+        if depth % 2 != 0:
+            bestscore = float('-inf')
+            #bestmove = None
+            for move in list(board.legal_moves):
+                board.push(move)
+                score = minimax(board, depth - 1) 
+                if score > bestscore:
+                    bestscore = score
+            return bestscore
+        elif depth % 2 != 0:
+            bestscore = float('inf')
+            #bestmove = None
+            for move in list(board.legal_moves):
+                board.push(move)
+                score = minimax(board, depth - 1) 
+                if score < bestscore:
+                    bestscore = score
+            return bestscore 
+
+
+        
+
 
 def updateBoard(board,move):
 # generate list of possible moves by opponent
@@ -46,7 +80,8 @@ def showMove(turn, move, board):
 
 def move(board):
 # Makes a move for each player
-    move = list(board.legal_moves)[0]
+    temp_board = chess.Board(board.fen())
+    move = minimax(temp_board, 3) 
     board.push(move)
     return move
 
