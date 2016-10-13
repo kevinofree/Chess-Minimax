@@ -14,30 +14,33 @@ def heuristicY(board):
 
 def minimax(board, depth):
     if depth == 0:
-        return randint(0,9)
-        #if board.turn == True:
-        #    return heuristicX(board)
-        #else:
-        #    return heuristicY(board)
+        if board.turn == True:
+            return (heuristicX(board), None)
+        else:
+            return (heuristicY(board), None)
     else:
         if depth % 2 != 0:
             bestscore = float('-inf')
-            #bestmove = None
+            bestmove = None
             for move in list(board.legal_moves):
-                board.push(move)
-                score = minimax(board, depth - 1) 
+                temp_board = chess.Board(board.fen())
+                temp_board.push(move)
+                score, _move = minimax(temp_board, depth - 1)
                 if score > bestscore:
                     bestscore = score
-            return bestscore
-        elif depth % 2 != 0:
+                    bestmove = move
+            return (bestscore, bestmove)
+        elif depth % 2 == 0:
             bestscore = float('inf')
-            #bestmove = None
+            bestmove = None
             for move in list(board.legal_moves):
-                board.push(move)
-                score = minimax(board, depth - 1) 
+                temp_board = chess.Board(board.fen())
+                temp_board.push(move)
+                score, _move = minimax(temp_board, depth - 1)
                 if score < bestscore:
                     bestscore = score
-            return bestscore 
+                    bestmove = move
+            return (bestscore, bestmove)
 
 
         
@@ -81,7 +84,8 @@ def showMove(turn, move, board):
 def move(board):
 # Makes a move for each player
     temp_board = chess.Board(board.fen())
-    move = minimax(temp_board, 3) 
+    move = minimax(temp_board, 3)[1]
+    print("Move: ", move)
     board.push(move)
     return move
 
