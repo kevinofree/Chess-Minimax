@@ -52,7 +52,7 @@ def updateBoard(board,move):
     for i in list(board.legal_moves):     # generate moves
         if str(i)[2:] == str(move)[-3:-1]: # look for match of opponent's move
             index = getIndex(str(i)[:2])
-            if str(board.piece_at(0)) == str(move)[4]:
+            if str(board.piece_at(index)) == str(move)[4]:
                 board.push(i)
                 print("matched the move, " , str(i))
                 break
