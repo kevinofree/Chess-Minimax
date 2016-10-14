@@ -64,7 +64,7 @@ def setupBoard():
 # Setup initial board for both players
 # PlayerX starts first and has a rook, knight, and king
 # PlayerY has a king and knight
-    return chess.Board("1n2k3/8/8/8/8/8/8/R3K1N1 w KQkq - 0 4")
+    return chess.Board("2n1k3/8/8/8/8/8/8/4K1NR w KQkq - 0 4")
 
 def play(n):
 # Driver function which initiates play
