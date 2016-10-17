@@ -1,10 +1,30 @@
 import chess
 from IPython.display import display
 from random import randint
+import sys
 
 def heuristicX(board):
 #Heuristic function for PlayerX
-    return randint(0,9)
+    #chess.Board("2n1k3/8/8/8/8/8/8/4K1NR w KQkq - 0 4")
+    piece_value = {'n':3, 'N' :3, 'k':200, 'K' :200, 'R': 5}
+    white_weight, black_weight  = 0, 0
+    white_pieces, black_pieces = 0, 0
+    check_board = str(board)
+    for piece in check_board:
+        if piece.islower():
+            black_pieces = black_pieces + 1
+            black_weight += piece_value[piece]
+        if piece.isupper():
+            white_pieces = white_pieces + 1
+            white_weight += piece_value[piece]
+    print("black piece ", black_pieces, " White Pieces", white_pieces)
+    if board.turn == True:
+        score = ( len(list(board.legal_moves)) + (white_pieces - black_pieces)) * white_weight
+        #print("white ", score)
+    else:
+        score = ( len(list(board.legal_moves)) + (black_pieces - white_pieces)) * black_weight
+        #print("black ", score)
+    return score
     #pass
 
 def heuristicY(board):
@@ -17,9 +37,9 @@ def minimax(board, depth):
         if board.turn == True:
             return (heuristicX(board), None)
         else:
-            return (heuristicY(board), None)
+            return (heuristicX(board), None)
     else:
-        if depth % 2 != 0:
+        if board.turn == True:
             bestscore = float('-inf')
             bestmove = None
             for move in list(board.legal_moves):
@@ -30,7 +50,7 @@ def minimax(board, depth):
                     bestscore = score
                     bestmove = move
             return (bestscore, bestmove)
-        elif depth % 2 == 0:
+        else:
             bestscore = float('inf')
             bestmove = None
             for move in list(board.legal_moves):
@@ -42,20 +62,22 @@ def minimax(board, depth):
                     bestmove = move
             return (bestscore, bestmove)
 
-
-        
-
-
 def updateBoard(board,move):
 # generate list of possible moves by opponent
 # finds correct move and updates board 
-    for i in list(board.legal_moves):     # generate moves
-        if str(i)[2:] == str(move)[-3:-1]: # look for match of opponent's move
-            index = getIndex(str(i)[:2])
-            if str(board.piece_at(0)) == str(move)[4]:
-                board.push(i)
-                print("matched the move, " , str(i))
-                break
+    #for i in list(board.legal_moves):     # generate moves
+    #    print(str(move)[-3:-1])
+    #    if str(i)[2:] == str(move)[-3:-1]: # look for match of opponent's move
+    #        index = getIndex(str(i)[:2])
+    #        if str(board.piece_at(index)) == str(move)[4]:
+    #            board.push(i)
+    #            print("matched the move, " , str(i))
+    #            break
+    move = move.split(':')
+    sanmove = move[1].upper() + move[2]
+    print("Matched Move: ", sanmove)
+    board.push_san(sanmove)
+
 
 def getIndex(move):
 # Returns an index given a square on the board
@@ -74,11 +96,11 @@ def showMove(turn, move, board):
     board.push(move)    # return to current board
     if board.turn == False: 
         log_x = open('log_x.txt','a')
-        log_x.write(str(turn) +':X:' + str(piece) +':'+ str(move)[-2:]+ '\n')
+        log_x.write(str(turn) +' X:' + str(piece) +':'+ str(move)[-2:]+ '\n')
         log_x.close()
     else:                   
         log_y = open('log_y.txt','a')
-        log_y.write(str(turn) +':Y:' + str(piece).lower() +':'+ str(move)[-2:]+ '\n')
+        log_y.write(str(turn) +' Y:' + str(piece).lower() +':'+ str(move)[-2:]+ '\n')
         log_y.close()
 
 def move(board):
@@ -97,13 +119,15 @@ def lastMoveMade(fn):
     if moveList == []:
         return ''
     else:
+        if moveList[-1] == "Checkmate\n" or moveList[-1] == "Stalemate\n":
+            sys.exit(0)
         return moveList[-1]
 
 def setupBoard():
 # Setup initial board for both players
 # PlayerX starts first and has a rook, knight, and king
 # PlayerY has a king and knight
-    return chess.Board("1n2k3/8/8/8/8/8/8/R3K1N1 w KQkq - 0 4")
+    return chess.Board("2n1k3/8/8/8/8/8/8/4K1NR w KQkq - 0 4")
 
 def play(n):
 # Driver function which initiates play
@@ -126,8 +150,18 @@ def play(n):
         yMove = ''
         while turnCount <= n:
             print("Turn ", turnCount)
-            if board.is_game_over() == True or board.is_stalemate() == True:
-                break
+            if board.is_checkmate() or board.is_stalemate():
+                if board.is_checkmate():
+                    log_x = open('log_x.txt','a')
+                    log_x.write("Checkmate\n")
+                    sys.exit(0)
+                elif board.is_stalemate():
+                    log_x = open('log_x.txt','a')
+                    log_x.write("Stalemate\n")
+                    sys.exit(0)
+                else:
+                    log_x = open('log_x.txt','a')
+                    log_x.write("Maximum # of turns reached\n")
             if turnCount is 1:
                 nextMove = move(board)
                 showMove(turnCount, nextMove,board)
@@ -142,22 +176,34 @@ def play(n):
                 showMove(turnCount, nextMove, board)
             turnCount += 1
             
-        if board.is_game_over() == True:
-            log_x = open('log_x.txt','a')
-            log_x.write("Checkmate\n")
-        elif board.is_stalemate() == True:
-            log_x = open('log_x.txt','a')
-            log_x.write("Stalemate\n")
-        else:
-            log_x = open('log_x.txt','a')
-            log_x.write("Maximum # of turns reached\n")
+        #if board.is_checkmate() == True:
+        #    log_x = open('log_x.txt','a')
+        #    log_x.write("Checkmate\n")
+        #    sys.exit(0)
+        #elif board.is_stalemate() == True:
+        #    log_x = open('log_x.txt','a')
+        #    log_x.write("Stalemate\n")
+        #    sys.exit(0)
+        #else:
+        #    log_x = open('log_x.txt','a')
+        #    log_x.write("Maximum # of turns reached\n")
 
     elif player.upper() =="Y":
         xMove = ''
         while turnCount <= n:
             print("Turn ", turnCount)
-            if board.is_game_over() == True or board.is_stalemate() == True:
-                break
+            if board.is_checkmate() or board.is_stalemate():
+                if board.is_checkmate() == True:
+                    log_y = open('log_y.txt','a')
+                    log_y.write("Checkmate\n")
+                    sys.exit(0)
+                elif board.is_stalemate() == True:
+                    log_y = open('log_y.txt','a')
+                    log_y.write("Stalemate\n")
+                    sys.exit(0)
+                else:
+                    log_y = open('log_y.txt','a')
+                    log_y.write("Maximum # of turns reached\n")
             board.turn = True
             while xMove == lastMoveMade('log_x.txt'):  # Wait for PlayerX to make a move
                 pass
@@ -168,15 +214,17 @@ def play(n):
             showMove(turnCount,nextMove,board)
             turnCount += 1
 
-        if board.is_game_over() == True:
-            log_y = open('log_y.txt','a')
-            log_y.write("Checkmate\n")
-        elif board.is_stalemate() == True:
-            log_y = open('log_y.txt','a')
-            log_y.write("Stalemate\n")
-        else:
-            log_y = open('log_y.txt','a')
-            log_y.write("Maximum # of turns reached\n")
+        #if board.is_checkmate() == True:
+        #    log_y = open('log_y.txt','a')
+        #    log_y.write("Checkmate\n")
+        #    sys.exit(0)
+        #elif board.is_stalemate() == True:
+        #    log_y = open('log_y.txt','a')
+        #    log_y.write("Stalemate\n")
+        #    sys.exit(0)
+        #else:
+        #    log_y = open('log_y.txt','a')
+        #    log_y.write("Maximum # of turns reached\n")
     else:
         print("That Player does not exist")
 
