@@ -17,7 +17,6 @@ def heuristicX(board):
         if piece.isupper():
             white_pieces = white_pieces + 1
             white_weight += piece_value[piece]
-    print("black piece ", black_pieces, " White Pieces", white_pieces)
     if board.turn == True:
         score = ( len(list(board.legal_moves)) + (white_pieces - black_pieces)) * white_weight
         #print("white ", score)
@@ -77,7 +76,6 @@ def updateBoard(board,move):
     sanmove = move[1].upper() + move[2]
     print("Matched Move: ", sanmove)
     board.push_san(sanmove)
-
 
 def getIndex(move):
 # Returns an index given a square on the board
