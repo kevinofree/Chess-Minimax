@@ -28,7 +28,20 @@ def heuristicX(board):
 
 def heuristicY(board):
 #Heuristic function for PlayerY
-    return randint(0,9)
+    #return randint(0,9)
+    piece_amt = {'n':0, 'N' :0, 'k':0, 'K' :0, 'R': 0, 'r' : 0}
+    score = 0
+    check_board = str(board)
+    for piece in check_board:
+        if piece in piece_amt:
+            piece_amt[piece] += 1
+    score = ( 200*(piece_amt['k'] - piece_amt['K'])  
+            + 5*(piece_amt['r'] - piece_amt['R']) 
+            + 3*(piece_amt['n'] - piece_amt['N']) 
+            + 0.1*(len(list(board.legal_moves))) )
+    return score
+
+        
     #pass
 
 def minimax(board, depth, alpha, beta):
