@@ -1,6 +1,5 @@
 import chess
 from IPython.display import display, clear_output
-from random import randint
 import sys
 
 def heuristicX(board):
