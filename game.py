@@ -24,7 +24,6 @@ def heuristicX(board):
 
 def heuristicY(board):
 #Heuristic function for PlayerY
-    #return randint(0,9)
     piece_amt = {'n':0, 'N' :0, 'k':0, 'K' :0, 'R': 0, 'r' : 0}
     score = 0
     check_board = str(board)
@@ -111,7 +110,7 @@ def showMove(turn, move, oldmove, board):
 def move(board):
 # Makes a move for each player
     temp_board = chess.Board(board.fen())
-    move = minimax(temp_board, 4, float('-inf'), float('inf'))[1]
+    move = minimax(temp_board, 5, float('-inf'), float('inf'))[1]
     board.push(move)
     return move
 
