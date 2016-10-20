@@ -5,7 +5,6 @@ import sys
 
 def heuristicX(board):
 #Heuristic function for PlayerX
-    #chess.Board("2n1k3/8/8/8/8/8/8/4K1NR w KQkq - 0 4")
     piece_value = {'n':3, 'N' :3, 'k':6.5, 'K' :6.5, 'R': 5}
     white_weight, black_weight  = 0, 0
     white_pieces, black_pieces = 0, 0
@@ -19,12 +18,9 @@ def heuristicX(board):
             white_weight += piece_value[piece]
     if board.turn == True:
         score = (len(list(board.legal_moves)) + (white_pieces - black_pieces)) * white_weight
-        #print("white ", score)
     else:
         score = ( len(list(board.legal_moves)) + (black_pieces - white_pieces)) * black_weight
-        #print("black ", score)
     return score
-    #pass
 
 def heuristicY(board):
 #Heuristic function for PlayerY
@@ -40,9 +36,6 @@ def heuristicY(board):
             + 3*(piece_amt['n'] - piece_amt['N']) 
             + 0.1*(len(list(board.legal_moves))) )
     return score
-
-        
-    #pass
 
 def minimax(board, depth, alpha, beta):
     if depth == 0:
@@ -92,9 +85,8 @@ def getIndex(move):
 def showMove(turn, move, oldmove, board):
     # Displays the board 
     # Writes move to appropriate log file
-    print(str(board)) # print the board in ascii
-    #clear_output()
-    #display(board)
+    clear_output()
+    display(board)
     board.pop()       # go back one move
     mv = str(move)[:2] 
     index = getIndex(mv) # find the character of the piece moved
@@ -119,8 +111,7 @@ def showMove(turn, move, oldmove, board):
 def move(board):
 # Makes a move for each player
     temp_board = chess.Board(board.fen())
-    move = minimax(temp_board, 5, float('-inf'), float('inf'))[1]
-    print("Move: ", move)
+    move = minimax(temp_board, 4, float('-inf'), float('inf'))[1]
     board.push(move)
     return move
 
@@ -188,6 +179,7 @@ def play(n):
                 nextMove = move(board)           
                 showMove(turnCount, nextMove, yMove, board )
             turnCount += 2
+
         log_x = open('log_x.txt','a')
         log_x.write("Maximum # of turns reached\n")
         log_x.close()
@@ -213,10 +205,10 @@ def play(n):
                 xMove = lastMoveMade('log_x.txt')   # Change last move made by PlayerY
                 updateBoard(board,xMove)     # Update board with most recent move
                 board.turn = False
-                #print("Y ", board.turn)
                 nextMove = move(board)   
                 showMove(turnCount,nextMove, xMove, board)
                 turnCount += 2
+
         log_y = open('log_y.txt','a')
         log_y.write("Maximum # of turns reached\n")
         log_y.close()
@@ -224,7 +216,7 @@ def play(n):
         print("That Player does not exist")
 
 def main():
-    maxMoves = int(input("Input the max number turns:"))
+    maxMoves = int(input("Input the max number of turns:"))
     print('Turn limit set to:', maxMoves)
     play(maxMoves)
 
