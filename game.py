@@ -109,12 +109,7 @@ def showMove(turn, move, oldmove, board):
 def move(board):
 # Makes a move for each player
     temp_board = chess.Board(board.fen())
-<<<<<<< HEAD
-    move = minimax(temp_board, 3, float('-inf'), float('inf'))[1]
-    print("MOVE ", move)
-=======
     move = minimax(temp_board, 4, float('-inf'), float('inf'))[1]
->>>>>>> 67e3cffade1e7e6211b1120814fe1eaf9f45bfd6
     board.push(move)
     return move
 
@@ -189,14 +184,7 @@ def play(n):
                 nextMove = move(board)           
                 showMove(turnCount, nextMove, yMove, board )
             turnCount += 2
-<<<<<<< HEAD
-
         log_x = open('log_X.txt','a')
-=======
-        while yMove == lastMoveMade('log_y.txt'): # Wait for PlayerY to end game before writing to file
-                    pass    
-        log_x = open('log_x.txt','a')
->>>>>>> 67e3cffade1e7e6211b1120814fe1eaf9f45bfd6
         log_x.write("Maximum # of turns reached\n")
         log_x.close()
 
@@ -216,7 +204,6 @@ def play(n):
                     sys.exit(0)
             else:
                 board.turn = True
-<<<<<<< HEAD
                 print(turnCount)
                 while True:  # Wait for PlayerX to make a move
                     xMove = lastMoveMade('log_X.txt')
@@ -225,12 +212,6 @@ def play(n):
                     if xMove[1].strip() != "Y" and int(xMove[0]) >= turnCount:
                         break
                 xMove = lastMoveMade('log_X.txt')   # Change last move made by PlayerY
-=======
-                while xMove == lastMoveMade('log_x.txt'):  # Wait for PlayerX to make a move
-                    pass
-                xMove = lastMoveMade('log_x.txt')   # Change last move made by PlayerY
-                print(xMove)
->>>>>>> 67e3cffade1e7e6211b1120814fe1eaf9f45bfd6
                 updateBoard(board,xMove)     # Update board with most recent move
                 board.turn = False
                 if(board.is_checkmate()):
@@ -238,14 +219,8 @@ def play(n):
                     sys.exit(0)
                 nextMove = move(board)   
                 showMove(turnCount,nextMove, xMove, board)
-<<<<<<< HEAD
                 turnCount += 2
-
         log_y = open('log_Y.txt','a')
-=======
-            turnCount += 2
-        log_y = open('log_y.txt','a')
->>>>>>> 67e3cffade1e7e6211b1120814fe1eaf9f45bfd6
         log_y.write("Maximum # of turns reached\n")
         log_y.close()
     else:
