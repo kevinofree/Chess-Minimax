@@ -70,8 +70,7 @@ def minimax(board, depth, alpha, beta):
 def updateBoard(board,move):
 # Updates the board after the opponent has made a move
     move = move.split(':')
-    sanmove = move[1].upper() + move[2] #must be upper to be valid
-    matched_move = move[1]+move[2]
+    sanmove = move[1] + move[2] #must be upper to be valid
     board.push_san(sanmove)
 
 def getIndex(move):
@@ -83,8 +82,7 @@ def getIndex(move):
 def showMove(turn, move, oldmove, board):
     # Displays the board 
     # Writes move to appropriate log file
-    clear_output()
-    display(board)
+    print(str(board)+'\n')
     board.pop()       # go back one move
     mv = str(move)[:2] 
     index = getIndex(mv) # find the character of the piece moved
@@ -103,13 +101,13 @@ def showMove(turn, move, oldmove, board):
         oldmove = oldmove.split(' ')
         oldmove = str(turn) + ' '+ oldmove[1]
         log_y.write(oldmove)
-        log_y.write(str(turn+1) +' Y:' + str(piece).lower() +':'+ str(move)[-2:]+ '\n')
+        log_y.write(str(turn+1) +' Y:' + str(piece).upper() +':'+ str(move)[-2:]+ '\n')
         log_y.close()
 
 def move(board):
 # Makes a move for each player
     temp_board = chess.Board(board.fen())
-    move = minimax(temp_board, 5, float('-inf'), float('inf'))[1]
+    move = minimax(temp_board, 4, float('-inf'), float('inf'))[1]
     board.push(move)
     return move
 
@@ -121,8 +119,6 @@ def lastMoveMade(fn):
     if moveList == []:
         return ''
     else:
-        if moveList[-1] == "Checkmate\n" or moveList[-1] == "Stalemate\n":
-            sys.exit(0)
         return moveList[-1]
 
 def setupBoard():
@@ -163,7 +159,6 @@ def play(n):
                     log_x.close()
                     sys.exit(0)
                 
-
             if turnCount is 1:
                 nextMove = move(board)
                 showMove(turnCount, nextMove, None, board)
@@ -177,7 +172,8 @@ def play(n):
                 nextMove = move(board)           
                 showMove(turnCount, nextMove, yMove, board )
             turnCount += 2
-
+        while yMove == lastMoveMade('log_y.txt'): # Wait for PlayerY to end game before writing to file
+                    pass    
         log_x = open('log_x.txt','a')
         log_x.write("Maximum # of turns reached\n")
         log_x.close()
@@ -201,12 +197,12 @@ def play(n):
                 while xMove == lastMoveMade('log_x.txt'):  # Wait for PlayerX to make a move
                     pass
                 xMove = lastMoveMade('log_x.txt')   # Change last move made by PlayerY
+                print(xMove)
                 updateBoard(board,xMove)     # Update board with most recent move
                 board.turn = False
                 nextMove = move(board)   
                 showMove(turnCount,nextMove, xMove, board)
-                turnCount += 2
-
+            turnCount += 2
         log_y = open('log_y.txt','a')
         log_y.write("Maximum # of turns reached\n")
         log_y.close()
@@ -220,3 +216,4 @@ def main():
 
 if __name__ == "__main__":
 	main()
+
